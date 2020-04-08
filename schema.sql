@@ -1,6 +1,6 @@
 -- save the file
-DROP TABLE IF EXISTS locations ;
-CREATE TABLE locations (
+DROP TABLE IF EXISTS thelocations ;
+CREATE TABLE thelocations (
     id SERIAL PRIMARY KEY,
     search_query VARCHAR(255),
     formatted_query VARCHAR(255),
