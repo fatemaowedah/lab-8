@@ -19,9 +19,9 @@ app.get('/weather', weatherHandler);
 app.get('/trails', trailsHandler);
 app.use('*', notFoundHandler);
 app.use(errorHandler);
+
 function locationHandler(request, response) {
   const city = request.query.city;
-  console.log(city);
   const dataBaseCityQuery = 'SELECT search_query, formatted_query, latitude, longitude FROM thelocations WHERE search_query LIKE $1'
   client.query(dataBaseCityQuery, [city]).then((result) => {
     if (result.rows.length !== 0) {
@@ -57,17 +57,18 @@ function Location(city, geoData) {
   this.latitude = geoData[0].lat;
   this.longitude = geoData[0].lon;
 }
+//////////////////////////////////////////////////////////
 function weatherHandler(request, response) {
   superagent(
-      `https://api.weatherbit.io/v2.0/forecast/daily?city=${request.query.search_query}&key=${process.env.WEATHER_API_KEY}`
+    `https://api.weatherbit.io/v2.0/forecast/daily?city=${request.query.search_query}&key=${process.env.WEATHER_API_KEY}`
   )
-      .then((weatherData) => {
-          const locationData = weatherData.body.data.map((day) => {
-              return new Weather(day);
-          });
-          response.status(200).json(locationData);
-      })
-      .catch((error) => errorHandler(error, request, response))
+    .then((weatherData) => {
+      const locationData = weatherData.body.data.map((day) => {
+        return new Weather(day);
+      });
+      response.status(200).json(locationData);
+    })
+    .catch((error) => errorHandler(error, request, response))
 }
 function Weather(day) {
   this.forecast = day.weather.description;
@@ -76,15 +77,15 @@ function Weather(day) {
 //////////////////////////////////////////
 function trailsHandler(request, response) {
   superagent(
-      `https://www.hikingproject.com/data/get-trails?lat=${request.query.latitude}&lon=${request.query.longitude}&maxDistance=400&key=${process.env.TRAIL_API_KEY}`
+    `https://www.hikingproject.com/data/get-trails?lat=${request.query.latitude}&lon=${request.query.longitude}&maxDistance=400&key=${process.env.TRAIL_API_KEY}`
   )
-  .then((trialData) => {
+    .then((trialData) => {
       const TData = trialData.body.trails.map((TT) => {
-          return new Trails(TT);
+        return new Trails(TT);
       });
       response.status(200).json(TData);
-  })
-  .catch((error) => errorHandler(error, request, response))
+    })
+    .catch((error) => errorHandler(error, request, response))
 }
 
 function Trails(TT) {
@@ -96,8 +97,8 @@ function Trails(TT) {
   this.summary = TT.summary;
   this.trail_url = TT.trail_url;
   this.conditions = TT.conditionStatus;
-  this.condition_date =TT.conditionDate.slice(0,10);
-  this.condition_time =TT.conditionDate.slice(12,19);
+  this.condition_date = TT.conditionDate.slice(0, 10);
+  this.condition_time = TT.conditionDate.slice(12, 19);
 }
 //////////////////////////////////////////
 function notFoundHandler(request, response) {
